@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOT NPTEL WEEK-4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #f8f8f8;
+        }
+
+        .option.selected {
+            border-color: #3b82f6;
+        }
+
+        .option.correct {
+            background-color: #ecfdf5;
+        }
+
+        .option.wrong {
+            background-color: #fef2f2;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e5e5;
+            display: none;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .result-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .result-icon.correct {
+            color: #059669;
+        }
+
+        .result-icon.wrong {
+            color: #dc2626;
+        }
+
+        .explanation {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IOT NPTEL WEEK-4</h1>
+        <div id="quiz-container"></div>
+        <div class="controls">
+            <div id="score" class="score"></div>
+            <button id="submit-btn" class="button">Submit Answers</button>
+        </div>
+    </div>
+
+    <script>
+const questionsWeek4 = [
+  {
+    id: 1,
+    question: "In “AID”, a set of sensor nodes are deployed over an agricultural field.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "In “AID”, a set of sensor nodes are deployed over an agricultural field. See lecture 16 @ 13:16"
+  },
+  {
+    id: 2,
+    question: "Ultrasonic sensor senses the distance at which an object is located.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "Ultrasonic sensor senses the distance at which an object is located. See lecture 16 @ 13:18"
+  },
+  {
+    id: 3,
+    question: "In case of static sensors, where to deploy and/or activate sensors in WSN is a coverage problem.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "This is a coverage problem. See lecture 17 @ 07:11"
+  },
+  {
+    id: 4,
+    question: "Objective of coverage in WSN is to use maximum number of sensors and minimize network lifetime.",
+    options: ["True", "False"],
+    correctAnswer: 1,
+    explanation: "Objective is to use minimum sensors and maximize lifetime. See lecture 17 @ 08:47"
+  },
+  {
+    id: 5,
+    question: "A crossing is covered if it is in the interior of at least one node’s coverage disk.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "Crossing is covered by at least one node’s coverage disk. See lecture 17 @ 18:58"
+  },
+  {
+    id: 6,
+    question: "Which of the following is/are correct for stationary wireless sensor networks?",
+    options: [
+      "Topology cannot be changed automatically.",
+      "Node failure may result in partition of networks.",
+      "Both (a) and (b)",
+      "None of these"
+    ],
+    correctAnswer: 2,
+    explanation: "Both are correct. See lecture 18 @ 00:43"
+  },
+  {
+    id: 7,
+    question: "Most problems in static WSN can be classified as -",
+    options: [
+      "No coverage",
+      "More coverage",
+      "Both (a) and (b)",
+      "None of these"
+    ],
+    correctAnswer: 3,
+    explanation: "They are classified as Area, Point, and Barrier coverage. See lecture 18 @ 11:30"
+  },
+  {
+    id: 8,
+    question: "Which of the following is/are correct with respect UAV networks?",
+    options: [
+      "Multi-tasking",
+      "Large coverage area",
+      "Both (a) and (b)",
+      "None of these"
+    ],
+    correctAnswer: 2,
+    explanation: "Both are correct. See lecture 19 @ 05:19"
+  },
+  {
+    id: 9,
+    question: "UAV networks are scalable.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "UAV networks are scalable. See lecture 19 @ 09:00"
+  },
+  {
+    id: 10,
+    question: "In Mobile WSN, the Data Mules",
+    options: [
+      "Collect the data from sensor nodes",
+      "Goes to the sink and delivers the collected data",
+      "Both (a) and (b)",
+      "Neither (a) nor (b)"
+    ],
+    correctAnswer: 2,
+    explanation: "Data Mules do both. See lecture 18 @ 07:15"
+  },
+  {
+    id: 11,
+    question: "The full form of AUV is -",
+    options: [
+      "Antenna Used Vehicle",
+      "Autonomous Underwater Vehicle",
+      "Both (a) and (b)",
+      "Neither (a) nor (b)"
+    ],
+    correctAnswer: 1,
+    explanation: "Correct form: Autonomous Underwater Vehicle. See lecture 18 @ 08:35"
+  },
+  {
+    id: 12,
+    question: "This paradigm of sensing is known as –",
+    options: [
+      "Machine Centric Sensing",
+      "Device Centric Sensing",
+      "Human Centric Sensing",
+      "None of these"
+    ],
+    correctAnswer: 2,
+    explanation: "This is called Human Centric Sensing. See lecture 18 @ 11:37"
+  },
+  {
+    id: 13,
+    question: "Energy of Devices and Participant selection are not two major problems in Human Centric Sensing.",
+    options: ["True", "False"],
+    correctAnswer: 1,
+    explanation: "They are two major problems. See lecture 18 @ 12:45"
+  },
+  {
+    id: 14,
+    question: "Which of the following network topologies is used in UAV networks?",
+    options: [
+      "Bus",
+      "Star",
+      "Both (a) and (b)",
+      "Neither (a) nor (b)"
+    ],
+    correctAnswer: 1,
+    explanation: "UAV networks use star and mesh topologies. See lecture 19 @ 02:43"
+  },
+  {
+    id: 15,
+    question: "The M2M Application Platform provides integrated services based on device collected data-sets.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "True. See lecture 20 @ 18:00"
+  }
+];
+
+
+
+        let selectedAnswers = {};
+        let submitted = false;
+
+        function createQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            
+            questions.forEach(question => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                
+                questionCard.innerHTML = `
+                    <div class="question-text">Q${question.id}. ${question.question}</div>
+                    <div class="options-container">
+                        ${question.options.map((option, index) => `
+                            <label class="option" data-question="${question.id}" data-option="${index}">
+                                <input type="radio" name="question${question.id}" value="${index}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${question.id}">
+                        <div class="result-icon">
+                            <span class="icon"></span>
+                            <span class="result-text"></span>
+                        </div>
+                        <div class="explanation">${question.explanation}</div>
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionCard);
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionSelect);
+            });
+
+            document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+        }
+
+        function handleOptionSelect(event) {
+            if (submitted) return;
+
+            const questionId = parseInt(event.currentTarget.dataset.question);
+            const optionIndex = parseInt(event.currentTarget.dataset.option);
+
+            selectedAnswers[questionId] = optionIndex;
+
+            const questionOptions = document.querySelectorAll(`.option[data-question="${questionId}"]`);
+            questionOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            const radioButton = event.currentTarget.querySelector('input[type="radio"]');
+            radioButton.checked = true;
+        }
+
+        function handleSubmit() {
+            if (Object.keys(selectedAnswers).length < questions.length) {
+                alert("Please answer all questions before submitting!");
+                return;
+            }
+
+            submitted = true;
+            let score = 0;
+
+            questions.forEach(question => {
+                const isCorrect = selectedAnswers[question.id] === question.correctAnswer;
+                if (isCorrect) score++;
+
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                feedback.classList.add('visible');
+
+                const resultIcon = feedback.querySelector('.result-icon');
+                const resultText = feedback.querySelector('.result-text');
+                
+                if (isCorrect) {
+                    resultIcon.classList.add('correct');
+                    resultText.textContent = 'Correct Answer +1';
+                } else {
+                    resultIcon.classList.add('wrong');
+                    resultText.textContent = 'Wrong Answer +0';
+                }
+
+                const options = document.querySelectorAll(`.option[data-question="${question.id}"]`);
+                options.forEach((option, index) => {
+                    if (index === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (index === selectedAnswers[question.id]) {
+                        option.classList.add('wrong');
+                    }
+                });
+            });
+
+            document.getElementById('score').textContent = `Score: ${score}/${questions.length}`;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Try Again';
+            submitBtn.removeEventListener('click', handleSubmit);
+            submitBtn.addEventListener('click', resetQuiz);
+        }
+
+        function resetQuiz() {
+            location.reload();
+        }
+
+        createQuiz();
+    </script>
+</body>
+</html>
